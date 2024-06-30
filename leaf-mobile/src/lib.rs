@@ -9,6 +9,7 @@ use leaf::config;
 pub mod bindings;
 
 mod logger;
+
 use logger::ConsoleWriter;
 
 // This function is only available on iOS 13.0+
@@ -67,23 +68,23 @@ fn run(rt: &tokio::runtime::Runtime, config: leaf::config::Config) {
     });
 }
 
-#[cfg(target_os = "ios")]
-#[no_mangle]
-pub extern "C" fn run_leaf(config_path: *const c_char) {
-    let rt = tokio::runtime::Builder::new_current_thread()
-        .enable_all()
-        .build()
-        .unwrap();
-    if let Ok(config) = unsafe { CStr::from_ptr(config_path).to_str() }
-        .map_err(Into::into)
-        .and_then(leaf::config::from_file)
-    {
-        run(&rt, config);
-    } else {
-        error!("invalid config path or config file");
-        return;
-    }
-}
+// #[cfg(target_os = "ios")]
+// #[no_mangle]
+// pub extern "C" fn run_leaf(config_path: *const c_char) {
+//     let rt = tokio::runtime::Builder::new_current_thread()
+//         .enable_all()
+//         .build()
+//         .unwrap();
+//     if let Ok(config) = unsafe { CStr::from_ptr(config_path).to_str() }
+//         .map_err(Into::into)
+//         .and_then(leaf::config::from_file)
+//     {
+//         run(&rt, config);
+//     } else {
+//         error!("invalid config path or config file");
+//         return;
+//     }
+// }
 
 #[cfg(target_os = "android")]
 #[no_mangle]
@@ -100,6 +101,24 @@ pub extern "C" fn run_leaf(config_path: *const c_char, protect_path: *const c_ch
     if let Ok(config) = unsafe { CStr::from_ptr(config_path).to_str() }
         .map_err(Into::into)
         .and_then(leaf::config::from_file)
+    {
+        run(&rt, config);
+    } else {
+        error!("invalid config path or config file");
+        return;
+    }
+}
+
+#[cfg(target_os = "ios")]
+#[no_mangle]
+pub extern "C" fn run_kumquat(conf_string: *const c_char) {
+    let rt = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .unwrap();
+    if let Ok(config) = unsafe { CStr::from_ptr(conf_string).to_str() }
+	.map_err(Into::into)
+        .and_then(leaf::config::from_conf_string)
     {
         run(&rt, config);
     } else {

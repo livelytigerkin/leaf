@@ -147,7 +147,7 @@ trust-dns-proto = { version = "0.20", default-features = false }
 lru = "0.6"
 
 # Logging
-log = { version = "0.4", features = ["std"] }
+log = { version = "0.4", features = ["std", "release_max_level_off"] }
 fern = { version = "0.6", features = ["colored"] }
 chrono = "0.4"
 colored = "2.0"

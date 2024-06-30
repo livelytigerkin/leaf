@@ -12,6 +12,7 @@ pub mod json;
 
 #[cfg(feature = "config-conf")]
 pub mod conf;
+pub mod string_reader;
 
 pub use internal::*;
 
@@ -28,4 +29,8 @@ pub fn from_file(path: &str) -> Result<internal::Config> {
         }
     }
     Err(anyhow!("config files use extension .json or .conf"))
+}
+
+pub fn from_conf_string(conf_string: &str) -> Result<internal::Config> {
+    return conf::from_string(conf_string);
 }

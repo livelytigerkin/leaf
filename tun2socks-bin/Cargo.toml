@@ -11,7 +11,7 @@ path = "src/main.rs"
 [dependencies]
 leaf = { path = "../leaf", default-features=false, features=["outbound-socks"] }
 clap = { version = "3.0.0-beta.1", default-features = false, features =["std"] }
-log = { version = "0.4", features = ["std"] }
+log = { version = "0.4", features = ["std", "release_max_level_off"] }
 env_logger = "0.8"
 tokio = { version = "0.2", features = ["signal"] }
 futures = "0.3"

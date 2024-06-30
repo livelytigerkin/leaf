@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fs::File;
-use std::io::{self, BufRead};
+use std::io::{self, BufRead, BufReader, Error, Lines};
 use std::path::Path;
 
 use anyhow::anyhow;
@@ -10,6 +10,7 @@ use protobuf::Message;
 use regex::Regex;
 
 use crate::config::{external_rule, geosite, internal};
+use crate::config::string_reader::StringReader;
 
 #[derive(Debug, Default)]
 pub struct Tun {
@@ -1213,6 +1214,14 @@ where
 {
     let lines = read_lines(path)?;
     let lines = lines.collect();
+    let config = from_lines(lines)?;
+    to_internal(config)
+}
+
+pub fn from_string(config_str: &str) -> Result<internal::Config>
+{
+    let mut bufreader = BufReader::new(StringReader::new(config_str));
+    let lines: Vec<std::result::Result<String, Error>> = bufreader.lines().collect();
     let config = from_lines(lines)?;
     to_internal(config)
 }
