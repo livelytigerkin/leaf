@@ -18,7 +18,19 @@ use crate::{
 
 use super::netstack::NetStack;
 
+use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 const MTU: usize = 1500;
+
+static READ_TRAFFIC: AtomicU64 = AtomicU64::new(0u64);
+static WRITE_TRAFFIC: AtomicU64 = AtomicU64::new(0u64);
+
+pub fn get_read_traffic() -> u64 {
+    return READ_TRAFFIC.load(Ordering::Relaxed);
+}
+
+pub fn get_write_traffic() -> u64 {
+    return WRITE_TRAFFIC.load(Ordering::Relaxed);
+}
 
 pub fn new(
     inbound: Inbound,
@@ -96,7 +108,7 @@ pub fn new(
                         return;
                     }
                     Ok(n) => match tun_sink.send(TunPacket::new((&buf[..n]).to_vec())).await {
-                        Ok(_) => (),
+                        Ok(_) => { READ_TRAFFIC.fetch_add(n as u64, Ordering::Relaxed); () },
                         Err(e) => {
                             warn!("send pkt to tun failed: {}", e);
                             return;
@@ -114,7 +126,7 @@ pub fn new(
             while let Some(packet) = tun_stream.next().await {
                 match packet {
                     Ok(packet) => match stack_writer.write(packet.get_bytes()).await {
-                        Ok(_) => (),
+                        Ok(n) => { WRITE_TRAFFIC.fetch_add(n as u64, Ordering::Relaxed); () },
                         Err(e) => {
                             warn!("write pkt to stack failed: {}", e);
                             return;

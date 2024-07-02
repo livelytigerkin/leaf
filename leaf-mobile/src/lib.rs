@@ -4,6 +4,7 @@ use bytes::BytesMut;
 use log::*;
 
 use leaf::config;
+use leaf::proxy::tun::inbound::{get_read_traffic, get_write_traffic};
 
 #[cfg(any(target_os = "ios", target_os = "android"))]
 pub mod bindings;
@@ -125,4 +126,16 @@ pub extern "C" fn run_kumquat(conf_string: *const c_char) {
         error!("invalid config path or config file");
         return;
     }
+}
+
+#[cfg(target_os = "ios")]
+#[no_mangle]
+pub extern "C" fn get_read_traffics() -> u64 {
+    return get_read_traffic()
+}
+
+#[cfg(target_os = "ios")]
+#[no_mangle]
+pub extern "C" fn get_write_traffics() -> u64 {
+    return get_write_traffic()
 }
