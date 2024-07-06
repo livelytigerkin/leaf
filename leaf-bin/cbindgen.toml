@@ -1,0 +1,4 @@
+language = "C"
+
+[defines]
+"target_os = macos" = "__APPLE__"

@@ -36,7 +36,7 @@ fn main() {
                 .short('c')
                 .long("config")
                 .value_name("FILE")
-                .about("The configuration file")
+                .help("The configuration file")
                 .takes_value(true)
                 .default_value("config.conf"),
         )
@@ -44,7 +44,7 @@ fn main() {
             Arg::new("threads")
                 .long("threads")
                 .value_name("N")
-                .about("Sets the number of runtime threads.")
+                .help("Sets the number of runtime threads.")
                 .takes_value(true)
                 .default_value("auto"),
         )
@@ -52,7 +52,7 @@ fn main() {
             Arg::new("thread-stack-size")
                 .long("thread-stack-size")
                 .value_name("BYTES")
-                .about("Sets the stack size of runtime threads.")
+                .help("Sets the stack size of runtime threads.")
                 .takes_value(true)
                 .default_value(&default_thread_stack_size().to_string()),
         )
@@ -61,7 +61,7 @@ fn main() {
                 .short('t')
                 .long("test-outbound")
                 .value_name("TAG")
-                .about("Tests the availability of a specified outbound")
+                .help("Tests the availability of a specified outbound")
                 .takes_value(true),
         )
         .get_matches();
